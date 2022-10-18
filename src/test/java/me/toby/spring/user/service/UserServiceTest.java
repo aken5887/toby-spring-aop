@@ -32,7 +32,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import sun.java2d.pipe.SpanShapeRenderer.Simple;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("file:src/main/java/test-applicationContext.xml")
+@ContextConfiguration({"file:src/main/java/test-applicationContext.xml"})
 public class UserServiceTest {
 
   @Autowired
