@@ -1,6 +1,7 @@
-package me.toby.spring.user.service;
+package me.toby.spring.user.service.factorybean;
 
 import java.lang.reflect.Proxy;
+import me.toby.spring.user.service.TransactionHandler;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 

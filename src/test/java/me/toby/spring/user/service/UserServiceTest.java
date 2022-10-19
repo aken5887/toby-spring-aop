@@ -15,11 +15,14 @@ import java.util.List;
 import me.toby.spring.user.dao.UserDao;
 import me.toby.spring.user.domain.Level;
 import me.toby.spring.user.domain.User;
+import me.toby.spring.user.service.factorybean.TxProxyFactoryBean;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailException;
@@ -29,7 +32,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
-import sun.java2d.pipe.SpanShapeRenderer.Simple;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"file:src/main/java/test-applicationContext.xml"})
@@ -198,11 +200,14 @@ public class UserServiceTest {
       testUserService.setUserDao(userDao);
       testUserService.setMailSender(mailSender);
 
-      TxProxyFactoryBean txProxyFactoryBean
-          = applicationContext.getBean("&userService", TxProxyFactoryBean.class);
+      Class<TxProxyFactoryBean> txProxyFactoryBeanClass = TxProxyFactoryBean.class;
+      Class<ProxyFactoryBean> proxyFactoryBeanClass = ProxyFactoryBean.class;
+
+      ProxyFactoryBean txProxyFactoryBean
+          = applicationContext.getBean("&userService", proxyFactoryBeanClass);
       txProxyFactoryBean.setTarget(testUserService);
 
-      UserService txuserService = (UserService) txProxyFactoryBean.getObject();
+      UserService txUserService = (UserService) txProxyFactoryBean.getObject();
 
       userDao.deleteAll();
       for(User user:users){
@@ -210,7 +215,7 @@ public class UserServiceTest {
       }
 
       try{
-        txuserService.upgradeLevels();
+        txUserService.upgradeLevels();
         fail("TestUserServiceException expected");
       }catch(TestUserServiceException e){
       }
