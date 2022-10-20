@@ -15,13 +15,13 @@ import java.util.List;
 import me.toby.spring.user.dao.UserDao;
 import me.toby.spring.user.domain.Level;
 import me.toby.spring.user.domain.User;
+import me.toby.spring.user.service.UserServiceImpl.TestUserServiceException;
 import me.toby.spring.user.service.factorybean.TxProxyFactoryBean;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -41,14 +41,16 @@ public class UserServiceTest {
   private UserService userService;
   @Autowired
   private UserDao userDao;
-  @Autowired
-  private UserServiceImpl userServiceImpl;
+//  @Autowired
+//  private UserServiceImpl userServiceImpl;
   @Autowired
   private MailSender mailSender;
   @Autowired
   private PlatformTransactionManager transactionManager;
   @Autowired
   private ApplicationContext applicationContext;
+  @Autowired
+  private UserService testUserService;
 
   List<User> users;
 
@@ -65,6 +67,7 @@ public class UserServiceTest {
 
   @Test
   public void upgradeLevels() {
+    UserServiceImpl userServiceImpl = new UserServiceImpl();
     MockUserDao mockUserDao = new MockUserDao(this.users);
     userServiceImpl.setUserDao(mockUserDao);
 
@@ -84,6 +87,8 @@ public class UserServiceTest {
 
   @Test
   public void mockUpgradeLevels() {
+    UserServiceImpl userServiceImpl = new UserServiceImpl();
+
     UserDao mockUserDao = mock(UserDao.class);
     when(mockUserDao.getAll()).thenReturn(this.users);
     userServiceImpl.setUserDao(mockUserDao);
@@ -203,6 +208,7 @@ public class UserServiceTest {
       Class<TxProxyFactoryBean> txProxyFactoryBeanClass = TxProxyFactoryBean.class;
       Class<ProxyFactoryBean> proxyFactoryBeanClass = ProxyFactoryBean.class;
 
+      /** ProxyFactoryBean - getObject() */
       ProxyFactoryBean txProxyFactoryBean
           = applicationContext.getBean("&userService", proxyFactoryBeanClass);
       txProxyFactoryBean.setTarget(testUserService);
@@ -223,6 +229,30 @@ public class UserServiceTest {
       checkLevelUpgrade(users.get(1), false);
   }
 
+  /**
+   * DefaultAdvisorAutoProxy test
+   */
+  @Test
+  public void upgradeAllOrNothing(){
+    userDao.deleteAll();
+    for(User user:users){
+      userDao.add(user);
+    }
+    try{
+      System.out.println(this.testUserService.getClass());
+      this.testUserService.upgradeLevels();
+      fail("TestUserServiceException expected");
+    }catch (TestUserServiceException e){
+    }
+
+    checkLevelUpgrade(users.get(1), false);
+  }
+
+  @Test
+  public void advisorAutoProxyCreator(){
+    Assert.assertTrue(testUserService instanceof java.lang.reflect.Proxy);
+  }
+
   static class TestUserService extends UserServiceImpl {
     private String id;
 
@@ -236,8 +266,5 @@ public class UserServiceTest {
       }
       super.upgradeLevel(user);
     }
-  }
-
-  static class TestUserServiceException extends RuntimeException {
   }
 }

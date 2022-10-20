@@ -1,4 +1,4 @@
-package me.toby.spring.learningtest.factorybean;
+package me.toby.spring.common.factorybean;
 
 public class Message {
   String text;

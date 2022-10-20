@@ -107,6 +107,13 @@
       <version>${org.springframework-version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjtools</artifactId>
+      <version>1.9.9.1</version>
+    </dependency>
+
+
   </dependencies>
 
 </project>

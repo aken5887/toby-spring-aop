@@ -67,4 +67,20 @@ public class UserServiceImpl implements UserService{
     mailMessage.setText("업그레이드 되었습니다."+user.getLevel());
     this.mailSender.send(mailMessage);
   }
+
+  static class TestUserServiceException extends RuntimeException {
+  }
+
+  static class TestUserServiceImpl extends UserServiceImpl {
+    private String id = "madnite1";
+
+    @Override
+    public void upgradeLevel(User user) {
+      if(user.getId().equals(this.id)){
+        throw new TestUserServiceException();
+      }
+      super.upgradeLevel(user);
+    }
+  }
 }
+

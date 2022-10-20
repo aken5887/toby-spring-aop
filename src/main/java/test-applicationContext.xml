@@ -29,16 +29,22 @@
 <!--    </bean>-->
 
     <!-- proxyFactoryBean -->
-    <bean id="userService" class="org.springframework.aop.framework.ProxyFactoryBean">
-        <property name="target" ref="userServiceImpl"/>
-        <property name="interceptorNames">
-            <list>
-                <value>transactionAdvisor</value>
-            </list>
-        </property>
-    </bean>
+<!--    <bean id="userService" class="org.springframework.aop.framework.ProxyFactoryBean">-->
+<!--        <property name="target" ref="userServiceImpl"/>-->
+<!--        <property name="interceptorNames">-->
+<!--            <list>-->
+<!--                <value>transactionAdvisor</value>-->
+<!--            </list>-->
+<!--        </property>-->
+<!--    </bean>-->
 
-    <bean id="userServiceImpl" class="me.toby.spring.user.service.UserServiceImpl">
+<!--    <bean id="userServiceImpl" class="me.toby.spring.user.service.UserServiceImpl">-->
+<!--        <property name="userDao" ref="userDao"/>-->
+<!--        <property name="mailSender" ref="mailSender"/>-->
+<!--    </bean>-->
+
+    <!-- DefaultAdvisorAutoProxyCreator -->
+    <bean id="userService" class="me.toby.spring.user.service.UserServiceImpl">
         <property name="userDao" ref="userDao"/>
         <property name="mailSender" ref="mailSender"/>
     </bean>
@@ -60,12 +66,29 @@
         <property name="transactionManager" ref="transactionManager"/>
     </bean>
 
-    <bean id="transactionPointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">
-        <property name="mappedName" value="upgrade*"/>
+<!--    <bean id="transactionPointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">-->
+<!--        <property name="mappedName" value="upgrade*"/>-->
+<!--    </bean>-->
+
+<!--    <bean id="transactionPointcut" class="me.toby.spring.common.jdk.proxy.NameMatchClassMethodPointcut">-->
+<!--        <property name="mappedClassName" value="*ServiceImpl"/>-->
+<!--        <property name="mappedName" value="upgrade*"/>-->
+<!--    </bean>-->
+
+    <!-- AspectJ 표현식을 활용한 포인트 컷 -->
+    <bean id="transactionPointcut" class="org.springframework.aop.aspectj.AspectJExpressionPointcut">
+        <property name="expression" value="execution(* *..*ServiceImpl.upgrade*(..))" />
     </bean>
 
     <bean id="transactionAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
         <property name="pointcut" ref="transactionPointcut"/>
         <property name="advice" ref="transactionAdvice"/>
+    </bean>
+
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+
+    <!-- 스태틱 멤버 클래스는 $로 지정한다 -->
+    <bean id="testUserService" class="me.toby.spring.user.service.UserServiceImpl$TestUserServiceImpl"
+    parent="userService">
     </bean>
 </beans>
