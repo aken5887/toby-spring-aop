@@ -23,17 +23,20 @@
     </bean>
 
     <!-- aop -->
-    <aop:config>
-        <aop:advisor advice-ref="txAdvice" pointcut="bean(*Service)"/>
-    </aop:config>
+<!--    <aop:config>-->
+<!--        <aop:advisor advice-ref="txAdvice" pointcut="bean(*Service)"/>-->
+<!--    </aop:config>-->
 
     <!-- 스프링의 TransactionInterceptor -->
-    <tx:advice id="txAdvice" transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method name="get*" read-only="true"/>
-            <tx:method name="*"/>
-        </tx:attributes>
-    </tx:advice>
+<!--    <tx:advice id="txAdvice" transaction-manager="transactionManager">-->
+<!--        <tx:attributes>-->
+<!--            <tx:method name="get*" read-only="true"/>-->
+<!--            <tx:method name="*"/>-->
+<!--        </tx:attributes>-->
+<!--    </tx:advice>-->
+
+    <!-- 애노테이션 사용 -->
+    <tx:annotation-driven/>
 
 <!--    <bean id="txAdvice" class="org.springframework.transaction.interceptor.TransactionInterceptor">-->
 <!--        <property name="transactionManager" ref="transactionManager"/>-->

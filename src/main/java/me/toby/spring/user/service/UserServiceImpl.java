@@ -6,6 +6,7 @@ import me.toby.spring.user.domain.Level;
 import me.toby.spring.user.domain.User;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.transaction.annotation.Transactional;
 
 public class UserServiceImpl implements UserService{
 
@@ -41,7 +42,8 @@ public class UserServiceImpl implements UserService{
 
   @Override
   public User get(String id) {
-    return userDao.get(id);
+    User user = userDao.get(id);
+    return user;
   }
 
   @Override
@@ -104,16 +106,9 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public List<User> getAll() {
-//      super.getAll().stream().forEach((user) -> {
-//        super.update(user);
-//      });
-      for(User user:super.getAll()){
-        user.setLogin(user.getLogin()+1);
+      super.getAll().stream().forEach((user) -> {
         super.update(user);
-//        if(user.getId().equals("erwins")){
-//          throw new TestUserServiceException();
-//        }
-      }
+      });
       return null;
     }
   }

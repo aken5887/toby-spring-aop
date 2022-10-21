@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+                      http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+  <import resource="test-applicationContext.xml"/>
+
+<!--  <bean id="transactionAdvice" class="org.springframework.transaction.interceptor.TransactionInterceptor">-->
+<!--    <property name="transactionManager" ref="transactionManager"/>-->
+<!--    <property name="transactionAttributes">-->
+<!--      <props>-->
+<!--        <prop key="get*">PROPAGATION_REQUIRED,readOnly,timeout_30</prop> &lt;!&ndash;읽기전용, 시간제한 30초 &ndash;&gt;-->
+<!--        <prop key="upgrade*">PROPAGATION_REQUIRES_NEW,ISOLATION_SERIALIZABLE</prop>-->
+<!--        <prop key="*">PROPAGATION_REQUIRED</prop>-->
+<!--      </props>-->
+<!--    </property>-->
+<!--  </bean>-->
+
+  <aop:config>
+    <aop:advisor advice-ref="txAdvice" pointcut="bean(*Service)"/>
+    <aop:advisor advice-ref="batchTxAdvice" pointcut="execution(me.toby.**.batchJob.*.*(..))"/>
+  </aop:config>
+
+  <tx:advice id="txAdvice" transaction-manager="transactionManager">
+    <tx:attributes>
+      <tx:method name="get*" propagation="REQUIRED" read-only="true" timeout="30"/>
+      <tx:method name="upgrade*" propagation="REQUIRES_NEW" isolation="SERIALIZABLE"/>
+      <tx:method name="*" propagation="REQUIRED"/>
+    </tx:attributes>
+  </tx:advice>
+
+  <tx:advice id="batchTxAdvice">
+    <tx:attributes>
+      <tx:method name="batch*" propagation="REQUIRES_NEW" isolation="SERIALIZABLE"/>
+    </tx:attributes>
+  </tx:advice>
+
+</beans>

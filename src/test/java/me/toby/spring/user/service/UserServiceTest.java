@@ -260,4 +260,5 @@ public class UserServiceTest {
     Assert.assertTrue(this.testUserService instanceof java.lang.reflect.Proxy);
     this.testUserService.getAll();
   }
+
 }
