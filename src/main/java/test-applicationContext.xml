@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/context
-       http://www.springframework.org/schema/context/spring-context.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+    http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
     <context:property-placeholder location="database.properties"/>
 
@@ -19,6 +21,29 @@
     <bean id="userDao" class="me.toby.spring.user.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSource"/>
     </bean>
+
+    <!-- aop -->
+    <aop:config>
+        <aop:advisor advice-ref="txAdvice" pointcut="bean(*Service)"/>
+    </aop:config>
+
+    <!-- 스프링의 TransactionInterceptor -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+
+<!--    <bean id="txAdvice" class="org.springframework.transaction.interceptor.TransactionInterceptor">-->
+<!--        <property name="transactionManager" ref="transactionManager"/>-->
+<!--        <property name="transactionAttributes">-->
+<!--            <props>-->
+<!--                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>-->
+<!--                <prop key="*">PROPAGATION_REQUIRED</prop>-->
+<!--            </props>-->
+<!--        </property>-->
+<!--    </bean>-->
 
     <!-- factorybean -->
 <!--    <bean id="userService" class="me.toby.spring.user.service.factorybean.TxProxyFactoryBean">-->
@@ -62,9 +87,9 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="transactionAdvice" class="me.toby.spring.user.service.proxyFactoryBean.TransactionAdvice">
-        <property name="transactionManager" ref="transactionManager"/>
-    </bean>
+<!--    <bean id="transactionAdvice" class="me.toby.spring.user.service.proxyFactoryBean.TransactionAdvice">-->
+<!--        <property name="transactionManager" ref="transactionManager"/>-->
+<!--    </bean>-->
 
 <!--    <bean id="transactionPointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">-->
 <!--        <property name="mappedName" value="upgrade*"/>-->
@@ -76,19 +101,19 @@
 <!--    </bean>-->
 
     <!-- AspectJ 표현식을 활용한 포인트 컷 -->
-    <bean id="transactionPointcut" class="org.springframework.aop.aspectj.AspectJExpressionPointcut">
-        <property name="expression" value="execution(* *..*ServiceImpl.upgrade*(..))" />
-    </bean>
+<!--    <bean id="transactionPointcut" class="org.springframework.aop.aspectj.AspectJExpressionPointcut">-->
+<!--        <property name="expression" value="execution(* *..*ServiceImpl.upgrade*(..))" />-->
+<!--    </bean>-->
 
-    <bean id="transactionAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
-        <property name="pointcut" ref="transactionPointcut"/>
-        <property name="advice" ref="transactionAdvice"/>
-    </bean>
+<!--    <bean id="transactionAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">-->
+<!--        <property name="pointcut" ref="transactionPointcut"/>-->
+<!--        <property name="advice" ref="transactionAdvice"/>-->
+<!--    </bean>-->
 
-    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+    <!-- 빈 후처리기 자동생성 -->
+<!--    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>-->
 
     <!-- 스태틱 멤버 클래스는 $로 지정한다 -->
-    <bean id="testUserService" class="me.toby.spring.user.service.UserServiceImpl$TestUserServiceImpl"
-    parent="userService">
-    </bean>
+    <bean id="testUserService" class="me.toby.spring.user.service.UserServiceImpl$TestUserService" parent="userService"/>
+
 </beans>

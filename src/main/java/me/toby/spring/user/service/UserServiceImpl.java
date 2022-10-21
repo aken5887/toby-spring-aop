@@ -39,6 +39,26 @@ public class UserServiceImpl implements UserService{
           .forEach(user -> upgradeLevel(user));
   }
 
+  @Override
+  public User get(String id) {
+    return userDao.get(id);
+  }
+
+  @Override
+  public List<User> getAll() {
+    return userDao.getAll();
+  }
+
+  @Override
+  public void deleteAll() {
+    userDao.deleteAll();
+  }
+
+  @Override
+  public void update(User user) {
+    userDao.update(user);
+  }
+
   private boolean canUpgradeLevel(User user){
     Level currentLevel = user.getLevel();
     switch(currentLevel){
@@ -71,7 +91,7 @@ public class UserServiceImpl implements UserService{
   static class TestUserServiceException extends RuntimeException {
   }
 
-  static class TestUserServiceImpl extends UserServiceImpl {
+  static class TestUserService extends UserServiceImpl {
     private String id = "madnite1";
 
     @Override
@@ -80,6 +100,21 @@ public class UserServiceImpl implements UserService{
         throw new TestUserServiceException();
       }
       super.upgradeLevel(user);
+    }
+
+    @Override
+    public List<User> getAll() {
+//      super.getAll().stream().forEach((user) -> {
+//        super.update(user);
+//      });
+      for(User user:super.getAll()){
+        user.setLogin(user.getLogin()+1);
+        super.update(user);
+//        if(user.getId().equals("erwins")){
+//          throw new TestUserServiceException();
+//        }
+      }
+      return null;
     }
   }
 }

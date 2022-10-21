@@ -25,6 +25,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.TransientDataAccessException;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -201,9 +202,9 @@ public class UserServiceTest {
   @Test
   @DirtiesContext
   public void upgradeOrNothing() throws Exception {
-      TestUserService testUserService = new TestUserService(users.get(3).getId());
-      testUserService.setUserDao(userDao);
-      testUserService.setMailSender(mailSender);
+//      TestUserService testUserService = new TestUserService(users.get(3).getId());
+//      testUserService.setUserDao(userDao);
+//      testUserService.setMailSender(mailSender);
 
       Class<TxProxyFactoryBean> txProxyFactoryBeanClass = TxProxyFactoryBean.class;
       Class<ProxyFactoryBean> proxyFactoryBeanClass = ProxyFactoryBean.class;
@@ -250,21 +251,13 @@ public class UserServiceTest {
 
   @Test
   public void advisorAutoProxyCreator(){
-    Assert.assertTrue(testUserService instanceof java.lang.reflect.Proxy);
+    Assert.assertTrue(this.testUserService instanceof java.lang.reflect.Proxy);
+    Assert.assertTrue(this.userService instanceof java.lang.reflect.Proxy);
   }
 
-  static class TestUserService extends UserServiceImpl {
-    private String id;
-
-    private TestUserService(String id){
-      this.id = id;
-    }
-
-    public void upgradeLevel(User user){
-      if(user.getId().equals(this.id)) {
-        throw new TestUserServiceException();
-      }
-      super.upgradeLevel(user);
-    }
+  @Test(expected = TransientDataAccessException.class)
+  public void readOnlyTransactionAttribute(){
+    Assert.assertTrue(this.testUserService instanceof java.lang.reflect.Proxy);
+    this.testUserService.getAll();
   }
 }
