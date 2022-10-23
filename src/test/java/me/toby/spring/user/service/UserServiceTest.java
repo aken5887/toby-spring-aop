@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import me.toby.spring.TestApplicationContext;
 import me.toby.spring.user.dao.UserDao;
 import me.toby.spring.user.domain.Level;
 import me.toby.spring.user.domain.User;
@@ -35,15 +36,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"file:src/main/java/test-applicationContext.xml"})
+@ContextConfiguration(classes = TestApplicationContext.class)
 public class UserServiceTest {
 
   @Autowired
   private UserService userService;
   @Autowired
   private UserDao userDao;
-//  @Autowired
-//  private UserServiceImpl userServiceImpl;
   @Autowired
   private MailSender mailSender;
   @Autowired

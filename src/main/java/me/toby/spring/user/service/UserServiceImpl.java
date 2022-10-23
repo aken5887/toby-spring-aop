@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService{
   static class TestUserServiceException extends RuntimeException {
   }
 
-  static class TestUserService extends UserServiceImpl {
+  public static class TestUserService extends UserServiceImpl {
     private String id = "madnite1";
 
     @Override

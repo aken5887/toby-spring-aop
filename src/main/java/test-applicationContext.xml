@@ -9,30 +9,23 @@
     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
     http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
-    <context:property-placeholder location="database.properties"/>
+<!--    <context:property-placeholder location="database.properties"/>-->
 
-    <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-        <property name="driverClass" value="${jdbc.driver}"/>
-        <property name="url" value="${jdbc.url}"/>
-        <property name="username" value="${jdbc.name}"/>
-        <property name="password" value="${jdbc.password}"/>
-    </bean>
+<!--    <bean id="userDao" class="me.toby.spring.user.dao.UserDaoJdbc">-->
+<!--        <property name="dataSource" ref="dataSource"/>-->
+<!--        <property name="sqlService" ref="sqlService"/>-->
+<!--    </bean>-->
 
-    <bean id="userDao" class="me.toby.spring.user.dao.UserDaoJdbc">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="sqlService" ref="sqlService"/>
-    </bean>
-
-    <bean id="sqlService" class="me.toby.spring.user.service.sqlService.UserSqlServiceImpl">
-        <property name="sqlMap">
-            <map>
-                <entry key="userAdd" value="insert into users (id, name, password, email, level, login, recommend)
-                values(?,?,?,?,?,?,?)"/>
-                <entry key="userGet"
-                    value="select * from users where id = ?"/>
-            </map>
-        </property>
-    </bean>
+<!--    <bean id="sqlService" class="me.toby.spring.user.service.sqlService.UserSqlServiceImpl">-->
+<!--        <property name="sqlMap">-->
+<!--            <map>-->
+<!--                <entry key="userAdd" value="insert into users (id, name, password, email, level, login, recommend)-->
+<!--                values(?,?,?,?,?,?,?)"/>-->
+<!--                <entry key="userGet"-->
+<!--                    value="select * from users where id = ?"/>-->
+<!--            </map>-->
+<!--        </property>-->
+<!--    </bean>-->
 
     <!-- aop -->
 <!--    <aop:config>-->
@@ -48,7 +41,7 @@
 <!--    </tx:advice>-->
 
     <!-- 애노테이션 사용 -->
-    <tx:annotation-driven/>
+<!--    <tx:annotation-driven/>-->
 
 <!--    <bean id="txAdvice" class="org.springframework.transaction.interceptor.TransactionInterceptor">-->
 <!--        <property name="transactionManager" ref="transactionManager"/>-->
@@ -84,23 +77,23 @@
 <!--    </bean>-->
 
     <!-- DefaultAdvisorAutoProxyCreator -->
-    <bean id="userService" class="me.toby.spring.user.service.UserServiceImpl">
-        <property name="userDao" ref="userDao"/>
-        <property name="mailSender" ref="mailSender"/>
-    </bean>
+<!--    <bean id="userService" class="me.toby.spring.user.service.UserServiceImpl">-->
+<!--        <property name="userDao" ref="userDao"/>-->
+<!--        <property name="mailSender" ref="mailSender"/>-->
+<!--    </bean>-->
 
     <!-- real -->
 <!--    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">-->
 <!--        <property name="host" value="mail.server.com"/>-->
 <!--    </bean>-->
 
-    <bean id="mailSender" class="me.toby.spring.user.service.DummyMailSender">
-    </bean>
+<!--    <bean id="mailSender" class="me.toby.spring.user.service.DummyMailSender">-->
+<!--    </bean>-->
 
-    <bean id="transactionManager"
-          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource"/>
-    </bean>
+<!--    <bean id="transactionManager"-->
+<!--          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">-->
+<!--        <property name="dataSource" ref="dataSource"/>-->
+<!--    </bean>-->
 
 <!--    <bean id="transactionAdvice" class="me.toby.spring.user.service.proxyFactoryBean.TransactionAdvice">-->
 <!--        <property name="transactionManager" ref="transactionManager"/>-->
@@ -129,6 +122,6 @@
 <!--    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>-->
 
     <!-- 스태틱 멤버 클래스는 $로 지정한다 -->
-    <bean id="testUserService" class="me.toby.spring.user.service.UserServiceImpl$TestUserService" parent="userService"/>
+<!--    <bean id="testUserService" class="me.toby.spring.user.service.UserServiceImpl$TestUserService" parent="userService"/>-->
 
 </beans>

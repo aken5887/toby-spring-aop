@@ -3,6 +3,7 @@ package me.toby.spring.user.dao;
 import java.util.Arrays;
 import java.util.List;
 import javax.sql.DataSource;
+import me.toby.spring.TestApplicationContext;
 import me.toby.spring.user.domain.Level;
 import me.toby.spring.user.domain.User;
 import org.junit.Assert;
@@ -15,8 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-//@ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = "file:src/main/java/test-applicationContext.xml")
+@ContextConfiguration(classes = TestApplicationContext.class)
 public class UserDaoJdbcTest {
 
    @Autowired
@@ -44,6 +44,7 @@ public class UserDaoJdbcTest {
    @Test
    @Transactional
    public void addTest(){
+      userDao.deleteAll();
       int initalCount = userDao.getCount();
       users.stream().forEach(user -> {
          userDao.add(user);
