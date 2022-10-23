@@ -1,7 +1,9 @@
 package me.toby.spring.user.dao;
 
+import java.util.Map;
 import me.toby.spring.user.domain.Level;
 import me.toby.spring.user.domain.User;
+import me.toby.spring.user.service.sqlService.SqlService;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -14,8 +16,22 @@ public class UserDaoJdbc implements UserDao{
 
     private JdbcTemplate jdbcTemplate;
 
+    /** XML 설정방식 */
+    private Map<String, String> sqlMap;
+
+    /** SQL용 객체를 만들어서 DI 하는 방식 */
+    private SqlService sqlService;
+
     public void setDataSource(DataSource dataSource){
         this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+
+    public void setSqlMap(Map<String, String> sqlMap) {
+        this.sqlMap = sqlMap;
+    }
+
+    public void setSqlService(SqlService sqlService) {
+        this.sqlService = sqlService;
     }
 
     private RowMapper<User> userMapper = new RowMapper<User>() {
@@ -35,8 +51,8 @@ public class UserDaoJdbc implements UserDao{
 
     @Override
     public void add(User user) {
-        this.jdbcTemplate.update("insert into users (id, name, password, email, level, login, recommend)" +
-                        "values(?,?,?,?,?,?,?)"
+        this.jdbcTemplate.update(//sqlMap.get("add")
+            sqlService.getSql("userAdd")
         ,user.getId(), user.getName()
         ,user.getPassword(), user.getEmail(), user.getLevel().intValue()
         ,user.getLogin(), user.getRecommend());
@@ -45,9 +61,7 @@ public class UserDaoJdbc implements UserDao{
     @Override
     public User get(String id) {
         return this.jdbcTemplate
-                .queryForObject("select * from users where id = ?"
-                        , this.userMapper
-                        , new Object[]{id});
+            .queryForObject(this.sqlService.getSql("userGet"), new Object[]{id}, this.userMapper);
     }
 
     @Override

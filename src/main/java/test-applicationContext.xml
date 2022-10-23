@@ -20,6 +20,18 @@
 
     <bean id="userDao" class="me.toby.spring.user.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSource"/>
+        <property name="sqlService" ref="sqlService"/>
+    </bean>
+
+    <bean id="sqlService" class="me.toby.spring.user.service.sqlService.UserSqlServiceImpl">
+        <property name="sqlMap">
+            <map>
+                <entry key="userAdd" value="insert into users (id, name, password, email, level, login, recommend)
+                values(?,?,?,?,?,?,?)"/>
+                <entry key="userGet"
+                    value="select * from users where id = ?"/>
+            </map>
+        </property>
     </bean>
 
     <!-- aop -->

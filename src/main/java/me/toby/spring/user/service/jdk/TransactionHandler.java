@@ -1,4 +1,4 @@
-package me.toby.spring.user.service;
+package me.toby.spring.user.service.jdk;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
